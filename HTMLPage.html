@@ -1,64 +1,121 @@
 ﻿<!DOCTYPE html>
 
 <html>
+<head>
+<style>
+#myCanvas{
+    position: absolute;
+    border: 1px solid green;
+}
+
+</style>
+</head>
 <body onload="initGame()">
-    <canvas id="myCanvas" width="500" height="400" style="border:1px solid #000000;"></canvas>
+    <canvas id="myCanvas" width="500" height="400"></canvas>
+    <script src = "Drop7_GameMechanic.js"></script>
     <script>
 
         function initGame() {
 
         }
-
+        var pushableAreaOffset = 8;
         var myGameArray = new Array(7);
+        var copyOfArray;
+        var updateInterval;
+        var newDisctoAdd = Math.floor(Math.random() * 7 + 1);
         for (i = 0; i < myGameArray.length; i++) {
             myGameArray[i] = new Array();
         }
+        function initGameArray (array) {
 
+        }
+        function executeAndUpdate(){
+            copyOfArray = myGameArray.slice(0);
+            console.log("copy check");
+            for (i = 0 ; i < copyOfArray.length ; i++){
+                for (j = 0 ; j < copyOfArray[i].length ; j++){
+                    console.log (copyOfArray[i][j]);
+                }
+            }
+            myGameArray = GameExecution(myGameArray);
+            Update();
+            console.log("array check");
+            for (i = 0 ; i < myGameArray.length ; i++){
+                for (j = 0 ; j < myGameArray[i].length ; j++){
+                    console.log (myGameArray[i][j]);
+                }
+            }
+            console.log("copy check");
+            for (i = 0 ; i < copyOfArray.length ; i++){
+                for (j = 0 ; j < copyOfArray[i].length ; j++){
+                    console.log (copyOfArray[i][j]);
+                }
+            }
+            if (arraysEqual(myGameArray, copyOfArray)){
+                console.log("clearInterval accessed");
+                clearInterval(updateInterval);
+            }
+        }
         function showGameArray(gameArray) {
 
         }
         function onMouseClick(event) {
-            if (event.x >= 25 && event.x <= 375 && event.y >= 25 && event.y <= 375)
+            if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25&& event.y <= 375)
             {
                 for (i = 1; i < 8; i++) {
-                    if (event.x <= 25 + 50 * i) {
-                        alert("array " + i + " selected");
+                    if (event.x < 25 + pushableAreaOffset + 50 * i) {
+                        myGameArray[i - 1].push(newDisctoAdd);
                         break;
                     }
                 }
+                newDisctoAdd = Math.floor(Math.random() * 7 + 1);
+                Update();
+                var isCombo = true;
+                updateInterval = setInterval(executeAndUpdate(), 500);
+
             }
         }
-        function getMouseXPosition(event) {
-            return event.x;
-        }
-        function getMouseYPosition(event) {
-            return event.y;
-        }
+
         var canvas = document.getElementById("myCanvas");
         canvas.addEventListener("mousedown", onMouseClick);
         var ctx = canvas.getContext("2d");
         ctx.font = "20px Arial";
         ctx.textAlign = "center";
-        ctx.rect(25, 25, 350, 350);
-        ctx.stroke();
-        ctx.beginPath();
-        for (i = 50; i < 375; i += 50) {
-            ctx.moveTo(25 + i, 25);
-            ctx.lineTo(25 + i, 375);
-            ctx.moveTo(25, 25 + i);
-            ctx.lineTo(375, 25 + i)
-            ctx.stroke();
-        }
+        
         var counter = 0;
-        for (i = 1; i < 8; i++) {
-            for (j = 1; j < 8; j++) {
-                if (counter % 2 == 0) ctx.fillStyle = "red";
-                else ctx.fillStyle = "black";
-                ctx.fillText(counter, 50 * i, canvas.height - 50 * j + 6);
-                counter++;
-
+        for (i = 0; i < myGameArray.length; i++) {
+            for (j = 0 ; j < myGameArray[i].length ; j++) {
+                ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
             }
         }
+        function Update(){
+            clearCanvas();
+            UpdateCanvas();
+        }
+        UpdateCanvas();
+        function UpdateCanvas(){
+            ctx.rect(25, 25, 350, 350);
+            ctx.stroke();
+            ctx.beginPath();
+            for (i = 50; i < 375; i += 50) {
+                ctx.moveTo(25 + i, 25);
+                ctx.lineTo(25 + i, 375);
+                ctx.moveTo(25, 25 + i);
+                ctx.lineTo(375, 25 + i)
+                ctx.stroke();
+            }
+            ctx.fillText("next:", 425, 50);
+            for (i = 0; i < myGameArray.length; i++) {
+                for (j = 0 ; j < myGameArray[i].length ; j++) {
+                    ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
+                }
+            }
+            ctx.fillText(newDisctoAdd, 425, 100);
+        }
+        function clearCanvas(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
 
     </script>
 </body>
