@@ -1,8 +1,8 @@
 function GameExecution(gameArray) {
-
-    for (i = 0; i < gameArray.length; i++) {
+    
+    for (var i = 0; i < gameArray.length; i++) {
         var vertDiscCount = gameArray[i].length;
-        for (j = 0; j < vertDiscCount; j++) {
+        for (var j = 0; j < vertDiscCount; j++) {
             if (gameArray[i][j] == vertDiscCount) {
                 gameArray[i][j] = 0;
             }
@@ -10,9 +10,9 @@ function GameExecution(gameArray) {
         }
     }
     //forloop to find disc procs on rows
-    for (i = 0; i < gameArray.length; i++) {
+    for (var i = 0; i < gameArray.length; i++) {
         var chain = 0;
-        for (j = 0; j <= gameArray.length; j++) {
+        for (var j = 0; j <= gameArray.length; j++) {
             if (j < gameArray.length && gameArray[j].length >= i + 1) {
                 chain++;
             }
@@ -27,19 +27,19 @@ function GameExecution(gameArray) {
         }
     } 
     //for loop to explode surrounding stones
-    for (i = 0; i < gameArray.length; i++) {
-        for (j = 0; j < gameArray[i].length; j++) {
+    for (var i = 0; i < gameArray.length; i++) {
+        for (var j = 0; j < gameArray[i].length; j++) {
             if (gameArray[i][j] == 0) {
-                //ExplodeSurroundingStones(gameArray, i, j);
+                ExplodeSurroundingStones(gameArray, i, j);
             }
         }
     }
-    //for loop to remove procced discs ; - 4 loops are needed to 
+    console.log("game execution");
     var numsToCheck = 1;
     while (numsToCheck != 0)
     {
-        for (i = 0; i < gameArray.length; i++) {
-            for (j = 0; j < gameArray[i].length; j++) {
+        for (var i = 0; i < gameArray.length; i++) {
+            for (var j = 0; j < gameArray[i].length; j++) {
                 if (gameArray[i][j] == 0) {
                     gameArray[i].splice(j, 1);
                     numsToCheck = 2;
@@ -48,126 +48,45 @@ function GameExecution(gameArray) {
         }
         numsToCheck--;
     }
-    return gameArray;
 }
 
-function deepCopyArray(array, arrayCopy) {
-    arrayCopy = new Array(array.length);
-    for (i = 0; i < array.length; i++) {
+function deepCopyArray(array) {
+    var arrayCopy = new Array(array.length);
+    for (var i = 0; i < array.length; i++) {
         arrayCopy[i] = new Array();
-        for (j = 0; j < array[i].length; j++) {
+        for (var j = 0; j < array[i].length; j++) {
             arrayCopy[i].push(array[i][j]);
         }
     }
-    return arrayCopy;
+    return arrayCopy
 }
 
 function arraysEqual(arr1, arr2) {
     if(arr1.length != arr2.length)
         return false;
-    for (i = 0 ; i < arr2.length ; i++) {
-        for (j = 0 ; j < arr2[i].length ; j ++) {
+    for (var i = 0 ; i < arr2.length ; i++) {
+        for (var j = 0 ; j < arr2[i].length ; j ++) {
             if (arr1[i][j] != arr2[i][j]) return false;
         }
     }
-
     return true;
 }
 
 function ExplodeSurroundingStones(gameArray, posX, posY) {
-    var rowLength = gameArray[posX].length;
-    if (rowLength > 1) {
-        var yAdd = 0;
-        //switch (posY) {
-        //    case 0:
-        //        yAdd++;
-        //        break;
-        //    case rowLength - 1:
-        //        yAdd--;
-        //        break;
-        //    default:
-        //        break;
-        //}
-        if (posY == 0) {
-            if (gameArray[posX][posY + 1] < 0) {
-                gameArray[posX][posY + 1]++;
-                if (gameArray[posX][posY + 1] == 0) {
-                    gameArray[posX][posY + 1] = Math.random() * 7 + 1;
-                }
-            }
-        }
-        else if (posY > 0 && posY < rowLength - 1) {
-            if (gameArray[posX][posY - 1] < 0) {
-                gameArray[posX][posY - 1]++;
-                if (gameArray[posX][posY - 1] == 0) {
-                    gameArray[posX][posY - 1] = Math.random() * 7 + 1;
-                }
-            }
-            if (gameArray[posX][posY + 1] < 0) {
-                gameArray[posX][posY + 1]++;
-                if (gameArray[posX][posY + 1] == 0) {
-                    gameArray[posX][posY + 1] = Math.random() * 7 + 1;
-                }
-            }
-        }
-        else if (posY == rowLength - 1) {
-            if (gameArray[posX][posY - 1] < 0) {
-                gameArray[posX][posY - 1]++;
-                if (gameArray[posX][posY - 1] == 0) {
-                    gameArray[posX][posY - 1] = Math.random() * 7 + 1;
-                }
-            }
-        }
-    }
-    if (posX == 0) {
-        if (gameArray[posX + 1].length - 1 >= posY) {
-            if (gameArray[posX + 1][posY] < 0) {
-                gameArray[posX + 1][posY]++;
-                if (gameArray[posX + 1][posY] == 0) {
-                    gameArray[posX + 1][posY] = Math.random() * 7 + 1;
-                }
-            }
-        }
-    }
-    else if (posX > 0 && posX < gameArray.length)
-    {
-        if (gameArray[posX - 1].length - 1 >= posY) {
-            if (gameArray[posX - 1][posY] < 0) {
-                gameArray[posX - 1][posY - 1]++;
-                if (gameArray[posX - 1][posY - 1] == 0) {
-                    gameArray[posX - 1][posY - 1] = Math.random() * 7 + 1;
-                }
-            }
-        }
-        if (gameArray[posX + 1].length - 1 >= posY) {
-            if (gameArray[posX + 1][posY] < 0) {
-                gameArray[posX + 1][posY - 1]++;
-                if (gameArray[posX + 1][posY - 1] == 0) {
-                    gameArray[posX + 1][posY - 1] = Math.random() * 7 + 1;
-                }
-            }
-        }
-    }
-    else if (posX == gameArray.length - 1) {
-        if (gameArray[posX - 1].length - 1 >= posY) {
-            if (gameArray[posX - 1][posY] < 0) {
-                gameArray[posX - 1][posY]++;
-                if (gameArray[posX - 1][posY] == 0) {
-                    gameArray[posX - 1][posY] = Math.random() * 7 + 1;
+    for (var i = -1 ; i < 2 ; i++){
+        for (var j = -1 ; j < 2 ; j++){
+            if (Math.abs(i) == Math.abs(j)) continue;
+            if(posX + i >= 0 && posX + i < gameArray.length && posY + j >= 0 && posY + j < gameArray[posX + i].length){
+                if (gameArray[posX + i][posY + j] < 0){
+                    gameArray[posX + i][posY + j]++;
+                    if (gameArray[posX + i][posY + j] == 0){
+                        gameArray[posX + i][posY + j] = Math.floor(Math.random() * 7 + 1);
+                    }
                 }
             }
         }
     }
 }
-
-//function CheckRow(row) {
-//    var discCount = row.length;
-//    for (j = 0; j < row.length; j++) {
-//        if (row[j] == discCount) {
-//            row[j] = 0;
-//        }
-//    }
-//}
 
 function PushStones(gameArray) {
     for (i = 0; i < gameArray.length; i++) {
