@@ -56,8 +56,12 @@
                 if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25 && event.y <= 375) {
                     for (var i = 1; i < 8; i++) {
                         if (event.x < 25 + pushableAreaOffset + 50 * i) {
-                            turnCount++;
-                            myGameArray[i - 1].push(newDisctoAdd);
+                            if (myGameArray[i - 1].length < 7)
+                            {
+                                turnCount++;
+                                myGameArray[i - 1].push(newDisctoAdd);
+                            }
+                            else return;
                             break;
                         }
                     }
