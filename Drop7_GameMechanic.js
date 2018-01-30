@@ -4,7 +4,6 @@ function GameExecution(gameArray) {
         var vertDiscCount = gameArray[i].length;
         for (j = 0; j < vertDiscCount; j++) {
             if (gameArray[i][j] == vertDiscCount) {
-                //alert("disc exploded");
                 gameArray[i][j] = 0;
             }
 
@@ -16,7 +15,6 @@ function GameExecution(gameArray) {
         for (j = 0; j <= gameArray.length; j++) {
             if (j < gameArray.length && gameArray[j].length >= i + 1) {
                 chain++;
-                //console.log("chain size: " + chain);
             }
             else if (chain > 0){
                 for (k = j - chain; k < j; k++) {
@@ -53,27 +51,22 @@ function GameExecution(gameArray) {
     return gameArray;
 }
 
-functoin deepCopyArray()
+function deepCopyArray(array, arrayCopy) {
+    arrayCopy = new Array(array.length);
+    for (i = 0; i < array.length; i++) {
+        arrayCopy[i] = new Array();
+        for (j = 0; j < array[i].length; j++) {
+            arrayCopy[i].push(array[i][j]);
+        }
+    }
+    return arrayCopy;
+}
 
 function arraysEqual(arr1, arr2) {
-    console.log ("equal method accessed");
-    console.log("copy check");
-            for (i = 0 ; i < arr2.length ; i++){
-                for (j = 0 ; j < arr2[i].length ; j++){
-                    console.log (arr2[i][j]);
-                }
-            }
-            console.log("array check");
-            for (i = 0 ; i < arr1.length ; i++){
-                for (j = 0 ; j < arr1[i].length ; j++){
-                    console.log (arr1[i][j]);
-                }
-            }
     if(arr1.length != arr2.length)
         return false;
-    for (i = 0 ; i < arr1.length ; i++) {
-        for (j = 0 ; j < arr1[i].length ; j ++) {
-            //console.log("game arr = " + arr1[i][j] + "; coppy arr = " + arr2[i][j]);
+    for (i = 0 ; i < arr2.length ; i++) {
+        for (j = 0 ; j < arr2[i].length ; j ++) {
             if (arr1[i][j] != arr2[i][j]) return false;
         }
     }

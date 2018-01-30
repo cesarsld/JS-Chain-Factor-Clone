@@ -20,8 +20,8 @@
         }
         var pushableAreaOffset = 8;
         var myGameArray = new Array(7);
-        var copyOfArray;
         var updateInterval;
+        var eventEnabled = true;
         var newDisctoAdd = Math.floor(Math.random() * 7 + 1);
         for (i = 0; i < myGameArray.length; i++) {
             myGameArray[i] = new Array();
@@ -29,50 +29,38 @@
         function initGameArray (array) {
 
         }
-        function executeAndUpdate(){
-            copyOfArray = myGameArray.slice(0);
-            console.log("copy check");
-            for (i = 0 ; i < copyOfArray.length ; i++){
-                for (j = 0 ; j < copyOfArray[i].length ; j++){
-                    console.log (copyOfArray[i][j]);
-                }
-            }
+        function sayHi() {
+            console.log("hi");
+        }
+        function executeAndUpdate() {
+            var copyOfArray = deepCopyArray(myGameArray, copyOfArray);
             myGameArray = GameExecution(myGameArray);
             Update();
-            console.log("array check");
-            for (i = 0 ; i < myGameArray.length ; i++){
-                for (j = 0 ; j < myGameArray[i].length ; j++){
-                    console.log (myGameArray[i][j]);
-                }
-            }
-            console.log("copy check");
-            for (i = 0 ; i < copyOfArray.length ; i++){
-                for (j = 0 ; j < copyOfArray[i].length ; j++){
-                    console.log (copyOfArray[i][j]);
-                }
-            }
+
             if (arraysEqual(myGameArray, copyOfArray)){
-                console.log("clearInterval accessed");
                 clearInterval(updateInterval);
+                eventEnabled = true;
             }
         }
         function showGameArray(gameArray) {
 
         }
         function onMouseClick(event) {
-            if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25&& event.y <= 375)
-            {
-                for (i = 1; i < 8; i++) {
-                    if (event.x < 25 + pushableAreaOffset + 50 * i) {
-                        myGameArray[i - 1].push(newDisctoAdd);
-                        break;
+            if (eventEnabled) {
+                if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25 && event.y <= 375) {
+                    for (i = 1; i < 8; i++) {
+                        if (event.x < 25 + pushableAreaOffset + 50 * i) {
+                            myGameArray[i - 1].push(newDisctoAdd);
+                            break;
+                        }
                     }
-                }
-                newDisctoAdd = Math.floor(Math.random() * 7 + 1);
-                Update();
-                var isCombo = true;
-                updateInterval = setInterval(executeAndUpdate(), 500);
+                    eventEnabled = false;
+                    newDisctoAdd = Math.floor(Math.random() * 7 + 1);
+                    Update();
+                    var isCombo = true;
+                    updateInterval = setInterval(executeAndUpdate, 500);
 
+                }
             }
         }
 
