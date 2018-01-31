@@ -48,9 +48,14 @@
         }
         var initInterval;
         var updateInterval;
+        var animationInterval;
         var eventEnabled = true;
         var isGameOver = false;
+        var animationRunning = false;
+        var frameCounter = 0;
+        var blocksLengthToDrop;
         var newDisctoAdd = Math.floor(Math.random() * 7 + 1);
+
         var canvas = document.getElementById("myCanvas");
         canvas.addEventListener("mousedown", onMouseClick);
         var ctx = canvas.getContext("2d");
@@ -187,6 +192,32 @@
             else {
                 ctx.drawImage(imageArray[newDisctoAdd - 1], 415, 68);
                 ctx.fillText(newDisctoAdd, 440, 100);
+            }
+        }
+        function updateAnimation(){
+            blocksLengthToDrop = returnDroppingArray(myGameArray);
+            animationRunning = true;
+            //set interval of 40 ms and make block move 5 pixels evert frame
+            animationInterval = setInterval(animate, 40);
+            
+
+        }
+
+        function animate(){
+            frameCounter++;
+            var maxLength = blocksLengthToDrop[0][0];
+
+            Update();
+            for (var i = 0; i < myGameArray.length; i++) {
+                if (blocksLengthToDrop[i][0] > maxLength) maxLength = blocksLengthToDrop[i][0];
+                for (var j = blocksLengthToDrop[i][1]; j < myGameArray[i].length; j++) {
+                    ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6 + (5 * frameCounter));
+                }
+            }
+            if (maxLength * 50 < frameCounter * 5) {
+                animationRunning = false;
+                frameCounter = 0;
+                clearInterval(animationInterval);
             }
         }
         function clearCanvas() {

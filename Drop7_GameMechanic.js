@@ -1,5 +1,5 @@
 function GameExecution(gameArray) {
-    
+    //for loop to find disc procs in column
     for (var i = 0; i < gameArray.length; i++) {
         var vertDiscCount = gameArray[i].length;
         for (var j = 0; j < vertDiscCount; j++) {
@@ -34,7 +34,8 @@ function GameExecution(gameArray) {
             }
         }
     }
-    var numsToCheck = 1;
+    //while loop is needed since length is affected to make sure all destroyed discs are removed
+    var numsToCheck = 1; 
     while (numsToCheck != 0)
     {
         for (var i = 0; i < gameArray.length; i++) {
@@ -58,6 +59,7 @@ function initGameArray(array) {
     }
 }
 
+//creates a deep copy of another array to make sure 
 function deepCopyArray(array) {
     var arrayCopy = new Array(array.length);
     for (var i = 0; i < array.length; i++) {
@@ -70,8 +72,6 @@ function deepCopyArray(array) {
 }
 
 function arraysEqual(arr1, arr2) {
-    if(arr1.length != arr2.length)
-        return false;
     for (var i = 0 ; i < arr2.length ; i++) {
         for (var j = 0 ; j < arr2[i].length ; j ++) {
             if (arr1[i][j] != arr2[i][j]) return false;
@@ -94,6 +94,24 @@ function ExplodeSurroundingStones(gameArray, posX, posY) {
             }
         }
     }
+}
+
+function returnDroppingArray (gameArray){
+    var blocksLengthToDrop = new Array(7);
+
+    for (var i = 0 ; i < gameArray.length ; i++){
+        blocksLengthToDrop[i] = new Array(2);
+        for (var j = 0; j < gameArray[i].length; j++) {
+            if (gameArray[i][j] == 0){
+                blocksLengthToDrop[i][0]++;
+            }
+            else if(blocksLengthToDrop[i][0] != 0){
+                blocksLengthToDrop[i][1] = j;
+                break;
+            }
+        }
+    }
+    return blocksLengthToDrop;
 }
 
 function PushStones(gameArray) {
