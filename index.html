@@ -38,7 +38,8 @@
             document.getElementById("stone_6"),
             document.getElementById("stone_7")
         ];
-        var turnCount = 15;
+        var turnCount = 20;
+        var level = 1;
         var pushableAreaOffset = 8;
 
         var myGameArray = new Array(7);
@@ -84,7 +85,8 @@
             for (var i = 0; i < myGameArray.length; i++) {
                 myGameArray[i] = new Array();
             }
-            turnCount = 15;
+            turnCount = 20;
+            level = 1;
             eventEnabled = true;
             isGameOver = false;
             initGame();
@@ -106,7 +108,8 @@
 
                 if (arraysEqual(myGameArray, copyOfArray)) {
                     if (turnCount == 0) {
-                        turnCount = 15;
+                        turnCount = 20 - level;
+                        level++;
                         PushStones(myGameArray);
                         Update();
                         isGameOver = gameOverCheck();
@@ -157,6 +160,8 @@
                 ctx.stroke();
             }
             ctx.fillText("Next disc:", 440, 50);
+            ctx.fillText("Level:", 440, 175);
+            ctx.fillText(level, 440, 200);
             ctx.fillText("Reset", 437, 344);
             ctx.font = "15px Arial";
             ctx.fillText("Next wave in: ", 437, 275);
