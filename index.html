@@ -11,54 +11,118 @@
 </style>
 </head>
 <body onload="initGame()">
-    <img style="display: none;" id = "perfectStone" src = "./GameAssets/stone.png" width = "50" height = "50" alt="A Stone">
-    <img style="display: none;" id = "okStone" src = "./GameAssets/stone2.png" width = "50" height = "50" alt="An ok Stone">
+    <img style="display: none;" id="perfectStone" src="./GameAssets/stone.png" width="50" height="50" alt="A Stone">
+    <img style="display: none;" id="okStone" src="./GameAssets/okStone.png" width="50" height="50" alt="An ok Stone">
+    <img style="display: none;" id="stone_1" src="./GameAssets/stone_1.png" width="50" height="50" alt="1 Stone">
+    <img style="display: none;" id="stone_2" src="./GameAssets/stone_2.png" width="50" height="50" alt="2 Stone">
+    <img style="display: none;" id="stone_3" src="./GameAssets/stone_3.png" width="50" height="50" alt="3 Stone">
+    <img style="display: none;" id="stone_4" src="./GameAssets/stone_4.png" width="50" height="50" alt="4 Stone">
+    <img style="display: none;" id="stone_5" src="./GameAssets/stone_5.png" width="50" height="50" alt="5 Stone">
+    <img style="display: none;" id="stone_6" src="./GameAssets/stone_6.png" width="50" height="50" alt="6 Stone">
+    <img style="display: none;" id="stone_7" src="./GameAssets/stone_7.png" width="50" height="50" alt="7 Stone">
     <canvas id="myCanvas" width="500" height="400"></canvas>
-    <script src = "Drop7_GameMechanic.js"></script>
+    <script src="Drop7_GameMechanic.js"></script>
     <script>
 
-        function initGame() {
 
-        }
-        var turnCount = 0;
+
+        
+
+
+        var imageArray = [
+            document.getElementById("stone_1"),
+            document.getElementById("stone_2"),
+            document.getElementById("stone_3"),
+            document.getElementById("stone_4"),
+            document.getElementById("stone_5"),
+            document.getElementById("stone_6"),
+            document.getElementById("stone_7")
+        ];
+        var turnCount = 15;
         var pushableAreaOffset = 8;
+
         var myGameArray = new Array(7);
-        var updateInterval;
-        var eventEnabled = true;
-        var newDisctoAdd = Math.floor(Math.random() * 7 + 1);
         for (i = 0; i < myGameArray.length; i++) {
             myGameArray[i] = new Array();
         }
-        function initGameArray () {
+        var initInterval;
+        var updateInterval;
+        var eventEnabled = true;
+        var isGameOver = false;
+        var newDisctoAdd = Math.floor(Math.random() * 7 + 1);
+        var canvas = document.getElementById("myCanvas");
+        canvas.addEventListener("mousedown", onMouseClick);
+        var ctx = canvas.getContext("2d");
+        ctx.font = "20px Arial";
+        ctx.textAlign = "center";
+        UpdateCanvas();
 
+
+        function initGame() {
+            initGameArray(myGameArray);
+            initInterval = setInterval(executeInit, 2);
         }
-        function resetArray(){
-            for (var i = 0 ; i < myGameArray.length ; i++){
+
+        function gameOverCheck() {
+            for (var i = 0; i < myGameArray.length; i++) {
+                if (myGameArray[i].length > 7) {
+                    clearInterval(updateInterval);
+                    eventEnabled = false;
+                    ctx.rotate(-30 * Math.PI / 180);
+                    ctx.font = "60px Arial";
+                    ctx.fillStyle = "red";
+                    ctx.fillText("GAME OVER !", 70, 300);
+                    ctx.rotate(30 * Math.PI / 180);
+                    ctx.font = "20px Arial";
+                    ctx.fillStyle = "black";
+                    return true;
+                }
+            }
+            return false;
+        }
+        function resetArray() {
+            for (var i = 0; i < myGameArray.length; i++) {
                 myGameArray[i] = new Array();
+            }
+            turnCount = 15;
+            eventEnabled = true;
+            isGameOver = false;
+            initGame();
+            Update();
+        }
+        function executeInit() {
+            var copyOfArray = deepCopyArray(myGameArray);
+            GameExecution(myGameArray);
+            if (arraysEqual(myGameArray, copyOfArray)) {
+                clearInterval(initInterval);
             }
             Update();
         }
         function executeAndUpdate() {
-            var copyOfArray = deepCopyArray(myGameArray);
-            GameExecution(myGameArray);
-            Update();
+            if (!isGameOver) {
+                var copyOfArray = deepCopyArray(myGameArray);
+                GameExecution(myGameArray);
+                Update();
 
-            if (arraysEqual(myGameArray, copyOfArray)){
-                clearInterval(updateInterval);
-                eventEnabled = true;
+                if (arraysEqual(myGameArray, copyOfArray)) {
+                    if (turnCount == 0) {
+                        turnCount = 15;
+                        PushStones(myGameArray);
+                        Update();
+                        isGameOver = gameOverCheck();
+                    }
+                    else clearInterval(updateInterval);
+                    eventEnabled = !isGameOver;
+                }
             }
-        }
-        function showGameArray(gameArray) {
-
         }
         function onMouseClick(event) {
             if (eventEnabled) {
                 if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25 && event.y <= 375) {
                     for (var i = 1; i < 8; i++) {
                         if (event.x < 25 + pushableAreaOffset + 50 * i) {
-                            if (myGameArray[i - 1].length < 7)
-                            {
-                                turnCount++;
+                            if (myGameArray[i - 1].length < 7) {
+                                turnCount--;
                                 myGameArray[i - 1].push(newDisctoAdd);
                             }
                             else return;
@@ -71,36 +135,15 @@
                     if (newDisctoAdd == 8) newDisctoAdd = -2;
                     Update();
                     var isCombo = true;
-                    updateInterval = setInterval(executeAndUpdate, 500);
-                    if (turnCount % 15 == 0) {
-                        PushStones(myGameArray);
-                    }
+                    updateInterval = setInterval(executeAndUpdate, 550);
                 }
             }
-            if (event.x >= 400 + pushableAreaOffset && event.x <= 475 + pushableAreaOffset && event.y >= 325 && event.y <= 350){
+            if (event.x >= 400 + pushableAreaOffset && event.x <= 475 + pushableAreaOffset && event.y >= 325 && event.y <= 350) {
                 console.log("reset");
                 resetArray();
             }
         }
-
-        var canvas = document.getElementById("myCanvas");
-        canvas.addEventListener("mousedown", onMouseClick);
-        var ctx = canvas.getContext("2d");
-        ctx.font = "20px Arial";
-        ctx.textAlign = "center";
-        
-        var counter = 0;
-        for (var i = 0; i < myGameArray.length; i++) {
-            for (var j = 0 ; j < myGameArray[i].length ; j++) {
-                ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
-            }
-        }
-        function Update(){
-            clearCanvas();
-            UpdateCanvas();
-        }
-        UpdateCanvas();
-        function UpdateCanvas(){
+        function UpdateCanvas() {
             ctx.rect(25, 25, 350, 350);
             ctx.stroke();
             ctx.rect(400, 325, 75, 25);
@@ -113,32 +156,41 @@
                 ctx.lineTo(375, 25 + i)
                 ctx.stroke();
             }
-            ctx.fillText("next:", 425, 50);
-            ctx.fillText("reset?", 437, 344);
+            ctx.fillText("Next disc:", 440, 50);
+            ctx.fillText("Reset", 437, 344);
+            ctx.font = "15px Arial";
+            ctx.fillText("Next wave in: ", 437, 275);
+            ctx.fillText(turnCount + " turns", 437, 290);
+            ctx.font = "20px Arial";
             for (var i = 0; i < myGameArray.length; i++) {
-                for (var j = 0 ; j < myGameArray[i].length ; j++) {
-                    if (myGameArray[i][j] == -2){
+                for (var j = 0; j < myGameArray[i].length; j++) {
+                    if (myGameArray[i][j] == -2) {
                         ctx.drawImage(document.getElementById("perfectStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25);
                     }
-                    else if (myGameArray[i][j] == -1){
+                    else if (myGameArray[i][j] == -1) {
                         ctx.drawImage(document.getElementById("okStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25);
                     }
-                    else{
-                       ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
+                    else {
+                        ctx.drawImage(imageArray[myGameArray[i][j] - 1], 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25)
+                        ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
                     }
                 }
             }
-            if (newDisctoAdd == -2){
-                ctx.drawImage(document.getElementById("perfectStone"), 400, 75);
+            if (newDisctoAdd == -2) {
+                ctx.drawImage(document.getElementById("perfectStone"), 415, 68);
             }
-            else{
-                ctx.fillText(newDisctoAdd, 425, 100);
+            else {
+                ctx.drawImage(imageArray[newDisctoAdd - 1], 415, 68);
+                ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
-        function clearCanvas(){
+        function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
-
+        function Update() {
+            clearCanvas();
+            UpdateCanvas();
+        }
 
     </script>
 </body>

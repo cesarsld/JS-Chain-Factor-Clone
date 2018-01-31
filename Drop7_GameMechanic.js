@@ -34,7 +34,6 @@ function GameExecution(gameArray) {
             }
         }
     }
-    console.log("game execution");
     var numsToCheck = 1;
     while (numsToCheck != 0)
     {
@@ -47,6 +46,15 @@ function GameExecution(gameArray) {
             }
         }
         numsToCheck--;
+    }
+}
+
+function initGameArray(array) {
+    for (var i = 0; i < array.length; i++) {
+        for (var j = 0; j < 3; j++) {
+            array[i][j] = Math.floor(Math.random() * 8 + 1);
+            if (array[i][j] == 8) array[i][j] = -2;
+        }
     }
 }
 
