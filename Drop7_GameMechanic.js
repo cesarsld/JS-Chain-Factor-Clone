@@ -35,9 +35,24 @@ function GameExecution(gameArray) {
         }
     }
     //while loop is needed since length is affected to make sure all destroyed discs are removed
-    var numsToCheck = 1; 
-    while (numsToCheck != 0)
-    {
+    //var numsToCheck = 1; 
+    //while (numsToCheck != 0)
+    //{
+    //    for (var i = 0; i < gameArray.length; i++) {
+    //        for (var j = 0; j < gameArray[i].length; j++) {
+    //            if (gameArray[i][j] == 0) {
+    //                gameArray[i].splice(j, 1);
+    //                numsToCheck = 2;
+    //            }
+    //        }
+    //    }
+    //    numsToCheck--;
+    //}
+}
+
+function spliceGaps(gameArray) {
+    var numsToCheck = 1;
+    while (numsToCheck != 0) {
         for (var i = 0; i < gameArray.length; i++) {
             for (var j = 0; j < gameArray[i].length; j++) {
                 if (gameArray[i][j] == 0) {
@@ -101,12 +116,14 @@ function returnDroppingArray (gameArray){
 
     for (var i = 0 ; i < gameArray.length ; i++){
         blocksLengthToDrop[i] = new Array(2);
+        blocksLengthToDrop[i][0] = 0;
+        blocksLengthToDrop[i][1] = 0;
         for (var j = 0; j < gameArray[i].length; j++) {
             if (gameArray[i][j] == 0){
                 blocksLengthToDrop[i][0]++;
+                blocksLengthToDrop[i][1] = j + 1;
             }
             else if(blocksLengthToDrop[i][0] != 0){
-                blocksLengthToDrop[i][1] = j;
                 break;
             }
         }

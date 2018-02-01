@@ -41,16 +41,19 @@
         var turnCount = 20;
         var level = 1;
         var pushableAreaOffset = 8;
+        var ticks = 0;
 
         var myGameArray = new Array(7);
         for (i = 0; i < myGameArray.length; i++) {
             myGameArray[i] = new Array();
         }
+        var copyOfArray;
         var initInterval;
         var updateInterval;
         var animationInterval;
         var eventEnabled = true;
         var isGameOver = false;
+        var animationNeeded = false;
         var animationRunning = false;
         var frameCounter = 0;
         var blocksLengthToDrop;
@@ -100,6 +103,8 @@
         function executeInit() {
             var copyOfArray = deepCopyArray(myGameArray);
             GameExecution(myGameArray);
+            spliceGaps(myGameArray);
+
             if (arraysEqual(myGameArray, copyOfArray)) {
                 clearInterval(initInterval);
             }
@@ -107,9 +112,22 @@
         }
         function executeAndUpdate() {
             if (!isGameOver) {
-                var copyOfArray = deepCopyArray(myGameArray);
-                GameExecution(myGameArray);
-                Update();
+                ticks++;
+                if (!animationNeeded && !animationRunning) {
+                    if (ticks * 40 < 550) return; 
+                    ticks = 0;
+                    copyOfArray = deepCopyArray(myGameArray);
+                    GameExecution(myGameArray);
+                    if (!arraysEqual(myGameArray, copyOfArray)) {
+                        animationNeeded = true;
+                    }
+                }
+                if (animationNeeded) {
+                    updateAnimation();
+                    return;
+                }
+                spliceGaps(myGameArray);
+                //Update();
 
                 if (arraysEqual(myGameArray, copyOfArray)) {
                     if (turnCount == 0) {
@@ -121,6 +139,9 @@
                     }
                     else clearInterval(updateInterval);
                     eventEnabled = !isGameOver;
+                }
+                else {
+                    animationRunning = false;
                 }
             }
         }
@@ -143,12 +164,43 @@
                     if (newDisctoAdd == 8) newDisctoAdd = -2;
                     Update();
                     var isCombo = true;
-                    updateInterval = setInterval(executeAndUpdate, 550);
+                    //setTimeout(() => { updateInterval = setInterval(executeAndUpdate, 40); }, 250);
+                    updateInterval = setInterval(executeAndUpdate, 40);
+                    //executeAndUpdate();
                 }
             }
             if (event.x >= 400 + pushableAreaOffset && event.x <= 475 + pushableAreaOffset && event.y >= 325 && event.y <= 350) {
                 console.log("reset");
                 resetArray();
+            }
+        }
+        function onlyCanvas() {
+            ctx.rect(25, 25, 350, 350);
+            ctx.stroke();
+            ctx.rect(400, 325, 75, 25);
+            ctx.stroke();
+            ctx.beginPath();
+            for (var i = 50; i < 375; i += 50) {
+                ctx.moveTo(25 + i, 25);
+                ctx.lineTo(25 + i, 375);
+                ctx.moveTo(25, 25 + i);
+                ctx.lineTo(375, 25 + i)
+                ctx.stroke();
+            }
+            ctx.fillText("Next disc:", 440, 50);
+            ctx.fillText("Level:", 440, 175);
+            ctx.fillText(level, 440, 200);
+            ctx.fillText("Reset", 437, 344);
+            ctx.font = "15px Arial";
+            ctx.fillText("Next wave in: ", 437, 275);
+            ctx.fillText(turnCount + " turns", 437, 290);
+            ctx.font = "20px Arial";
+            if (newDisctoAdd == -2) {
+                ctx.drawImage(document.getElementById("perfectStone"), 415, 68);
+            }
+            else {
+                ctx.drawImage(imageArray[newDisctoAdd - 1], 415, 68);
+                ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
         function UpdateCanvas() {
@@ -194,30 +246,60 @@
                 ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
-        function updateAnimation(){
-            blocksLengthToDrop = returnDroppingArray(myGameArray);
+        function updateAnimation() {
             animationRunning = true;
+            blocksLengthToDrop = returnDroppingArray(myGameArray);
             //set interval of 40 ms and make block move 5 pixels evert frame
-            animationInterval = setInterval(animate, 40);
-            
+            //animationInterval = setInterval(animate, 40);
+            animate();
+            //while (animationNeeded) { }
 
         }
 
-        function animate(){
+        function animate(){//fix issue where block wont fall totally because void separating it with next block
             frameCounter++;
             var maxLength = blocksLengthToDrop[0][0];
 
-            Update();
+            clearCanvas();
+            onlyCanvas();
+
+            for (var i = 0; i < myGameArray.length; i++) {
+                for (var j = 0; j < myGameArray[i].length; j++) {
+                    if (myGameArray[i][j] == 0) break;
+                    if (myGameArray[i][j] == -2) {
+                        ctx.drawImage(document.getElementById("perfectStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25);
+                    }
+                    else if (myGameArray[i][j] == -1) {
+                        ctx.drawImage(document.getElementById("okStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25);
+                    }
+                    else {
+                        ctx.drawImage(imageArray[myGameArray[i][j] - 1], 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25);
+                        ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6);
+                    }
+                }
+            }
+
             for (var i = 0; i < myGameArray.length; i++) {
                 if (blocksLengthToDrop[i][0] > maxLength) maxLength = blocksLengthToDrop[i][0];
                 for (var j = blocksLengthToDrop[i][1]; j < myGameArray[i].length; j++) {
-                    ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6 + (5 * frameCounter));
+                    if (blocksLengthToDrop[i][0] == 0 || myGameArray[i][j] == 0) continue;
+                    if (myGameArray[i][j] == -2) {
+                        ctx.drawImage(document.getElementById("perfectStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25 + (5 * frameCounter));
+                    }
+                    else if (myGameArray[i][j] == -1) {
+                        ctx.drawImage(document.getElementById("okStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25 + (5 * frameCounter));
+                    }
+                    else {
+                        ctx.drawImage(imageArray[myGameArray[i][j] - 1], 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25 + (5 * frameCounter));
+                        ctx.fillText(myGameArray[i][j], 50 * (i + 1), canvas.height - 50 * (j + 1) + 6 + (5 * frameCounter));
+                    }
                 }
             }
-            if (maxLength * 50 < frameCounter * 5) {
-                animationRunning = false;
+            if (maxLength * 50 <= frameCounter * 5) {
+                animationNeeded = false;
+                //animationRunning = false;
                 frameCounter = 0;
-                clearInterval(animationInterval);
+                //clearInterval(animationInterval);
             }
         }
         function clearCanvas() {
