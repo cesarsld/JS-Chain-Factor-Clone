@@ -65,6 +65,54 @@ function spliceGaps(gameArray) {
     }
 }
 
+function containsGaps(gameArray){
+    for (var i = 0; i < gameArray.length; i++) {
+        for (var j = 1 ; j < gameArray[i].length ; j++){
+            if (gameArray[i][j] == 0) return true;
+        }
+    }
+    return false;
+}
+
+function spliceTopGap(gameArray){
+    var keepChecking = true;
+    for (var i = 0; i < gameArray.length; i++) {
+        while (keepChecking) {
+            if (gameArray[i][gameArray[i].length - 1] == 0){
+                gameArray[i].pop();
+            }
+            else keepChecking = false;
+        }
+        keepChecking = true;
+    }
+}
+
+function spliceOuterChainGap(gameArray) {
+    var numToDelete = 0;
+    var gapDetected = false;
+    var gapLocation = 0;
+    spliceTopGap(gameArray);
+    for (var i = 0; i < gameArray.length; i++) {
+        for (var j = 0; j < gameArray[i].length; j++) {
+            if (gameArray[i][j] == 0 && !gapDetected) {
+                numToDelete++;
+                gapDetected = true;
+                gapLocation = j;
+            }
+            else if (gapDetected && gameArray[i][j] == 0)
+            {
+                numToDelete++;
+            }
+            else if (gapDetected && gameArray[i][j] != 0)
+            {
+                gameArray[i].splice(gapLocation, numToDelete);
+                gapDetected = false;
+                break;
+            }
+        }
+    }
+}
+
 function initGameArray(array) {
     for (var i = 0; i < array.length; i++) {
         for (var j = 0; j < 3; j++) {
@@ -122,6 +170,9 @@ function returnDroppingArray (gameArray){
             if (gameArray[i][j] == 0){
                 blocksLengthToDrop[i][0]++;
                 blocksLengthToDrop[i][1] = j + 1;
+                if (j == gameArray[i].length - 1) {
+                    blocksLengthToDrop[i][0] = 0;
+                }
             }
             else if(blocksLengthToDrop[i][0] != 0){
                 break;
