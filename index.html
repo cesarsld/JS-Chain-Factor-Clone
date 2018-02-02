@@ -71,8 +71,8 @@
 
 
         function initGame() {
-            initGameArray(myGameArray); //make it more slick maybe adding same function but with no animationor update canvas.
-            initInterval = setInterval(executeInit, 2);
+            initGameArray(myGameArray); 
+            initInterval = setInterval(executeInit, 2);//make it more slick maybe adding same function but with no animationor update canvas.
         }
 
         function gameOverCheck() {
@@ -122,6 +122,8 @@
             }
             Update();
         }
+
+        //core function of game
         function executeAndUpdate() {
             if (!isGameOver) {
                 if (dropAnimatoinNeeded) {
@@ -271,6 +273,7 @@
                 ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
+        //obsolete function, still in use. Plans to remove it
         function UpdateCanvas() {
             ctx.rect(25, 25, 350, 350);
             ctx.stroke();
@@ -317,10 +320,7 @@
         function updateAnimation() {
             animationRunning = true;
             blocksLengthToDrop = returnDroppingArray(myGameArray);
-            //set interval of 40 ms and make block move 5 pixels evert frame
-            //animationInterval = setInterval(animate, 40);
             animate();
-            //while (animationNeeded) { }
 
         }
         function dropAnimation() {
@@ -419,6 +419,7 @@
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+        //potentially obsolete
         function Update() {
             clearCanvas();
             UpdateCanvas();

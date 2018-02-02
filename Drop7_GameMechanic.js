@@ -50,6 +50,7 @@ function GameExecution(gameArray) {
     //}
 }
 
+//obsolete function
 function spliceGaps(gameArray) {
     var numsToCheck = 1;
     while (numsToCheck != 0) {
@@ -65,6 +66,7 @@ function spliceGaps(gameArray) {
     }
 }
 
+//function to check if game array constains gaps in array
 function containsGaps(gameArray){
     for (var i = 0; i < gameArray.length; i++) {
         for (var j = 1 ; j < gameArray[i].length ; j++){
@@ -74,6 +76,7 @@ function containsGaps(gameArray){
     return false;
 }
 
+//remove destroyed discs (gaps) on top of arrays
 function spliceTopGap(gameArray){
     var keepChecking = true;
     for (var i = 0; i < gameArray.length; i++) {
@@ -87,6 +90,7 @@ function spliceTopGap(gameArray){
     }
 }
 
+//function to remove the first encoutner of gap chain within array
 function spliceOuterChainGap(gameArray) {
     var numToDelete = 0;
     var gapDetected = false;
@@ -133,7 +137,7 @@ function deepCopyArray(array) {
     }
     return arrayCopy
 }
-
+//checks if 2 arrays are equal
 function arraysEqual(arr1, arr2) {
     for (var i = 0 ; i < arr2.length ; i++) {
         for (var j = 0 ; j < arr2[i].length ; j ++) {
@@ -159,6 +163,7 @@ function ExplodeSurroundingStones(gameArray, posX, posY) {
     }
 }
 
+//returns an array that contains the informatino on how many gaps to drop above discs and at what index to start
 function returnDroppingArray (gameArray){
     var blocksLengthToDrop = new Array(7);
 
@@ -181,7 +186,7 @@ function returnDroppingArray (gameArray){
     }
     return blocksLengthToDrop;
 }
-
+//add layer of stones at the bottom
 function PushStones(gameArray) {
     for (i = 0; i < gameArray.length; i++) {
         gameArray[i].splice(0, 0, -2);
