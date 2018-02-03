@@ -76,7 +76,9 @@
         }
 
         function gameOverCheck() {
+            var arrayFull = 0;
             for (var i = 0; i < myGameArray.length; i++) {
+                arrayFull += myGameArray[i].length;
                 if (myGameArray[i].length > 7) {
                     clearInterval(updateInterval);
                     eventEnabled = false;
@@ -90,6 +92,7 @@
                     return true;
                 }
             }
+            if (arrayFull == 49) return true;
             return false;
         }
         function resetArray() {
