@@ -5,7 +5,7 @@
     <style>
         #myCanvas {
             position: absolute;
-            border: 1px solid green;
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -19,6 +19,7 @@
     <img style="display: none;" id="stone_5" src="./GameAssets/stone_5.png" width="50" height="50" alt="5 Stone">
     <img style="display: none;" id="stone_6" src="./GameAssets/stone_6.png" width="50" height="50" alt="6 Stone">
     <img style="display: none;" id="stone_7" src="./GameAssets/stone_7.png" width="50" height="50" alt="7 Stone">
+    <img style="display: none;" id="grid" src="./GameAssets/grid.png" width="350" height="350" alt="a grid">
     <canvas id="myCanvas" width="500" height="400"></canvas>
     <script src="Drop7_GameMechanic.js"></script>
     <script>
@@ -47,11 +48,13 @@
             myGameArray[i] = new Array();
         }
         var copyOfArray;
+
+        //interval functions
         var initInterval;
         var updateInterval;
         var animationInterval;
+
         var eventEnabled = true;
-        var resetEnabled = true;
         var isGameOver = false;
         var animationNeeded = false;
         var animationRunning = false;
@@ -67,12 +70,11 @@
         var ctx = canvas.getContext("2d");
         ctx.font = "20px Arial";
         ctx.textAlign = "center";
-        UpdateCanvas();
 
 
         function initGame() {
-            initGameArray(myGameArray); 
-            initInterval = setInterval(executeInit, 2);//make it more slick maybe adding same function but with no animationor update canvas.
+            initGameArray(myGameArray);
+            initInterval = setInterval(executeInit, 2);
         }
 
         function gameOverCheck() {
@@ -101,14 +103,12 @@
                 myGameArray[i] = new Array();
             }
             eventEnabled = true;
-            resetEnabled = true;
             isGameOver = false;
             animationNeeded = false;
             animationRunning = false;
             dropAnimatoinNeeded = true;
             stonesPushed = false;
             frameCounter = 0;
-
             ticks = 0;
             turnCount = 20;
             level = 1;
@@ -122,8 +122,9 @@
 
             if (arraysEqual(myGameArray, copyOfArray)) {
                 clearInterval(initInterval);
+                Update();
             }
-            Update();
+
         }
 
         //core function of game
@@ -133,8 +134,8 @@
                     dropAnimation();
                 }
                 else {
-                    ticks++;
                     if (!animationNeeded && !animationRunning) {
+                        ticks++;
                         if (ticks * 40 <= 320) return;
                         ticks = 0;
                         copyOfArray = deepCopyArray(myGameArray);
@@ -147,23 +148,18 @@
                         updateAnimation();
                         return;
                     }
-                    //spliceGaps(myGameArray);
                     copyOfArray = deepCopyArray(myGameArray);
                     spliceOuterChainGap(myGameArray);
-                    
                     if (containsGaps(myGameArray)) {
-                            animationNeeded = true;
-                            return;
+                        animationNeeded = true;
+                        return;
                     }
-
-                    //Update();
-
                     if (arraysEqual(myGameArray, copyOfArray)) {
                         if (turnCount == 0) {
                             turnCount = 20 - level;
                             if (turnCount < 5) turnCount = 5;
                             level++;
-                            if (!stonesPushed){
+                            if (!stonesPushed) {
                                 PushStones(myGameArray);
                                 stonesPushed = true;
                             }
@@ -185,15 +181,12 @@
         }
 
         function onMouseHover(event) {
-            //console.log("hover");
             if (eventEnabled) {
                 if (event.x >= 25 + pushableAreaOffset && event.x <= 375 + pushableAreaOffset && event.y >= 25 && event.y <= 375) {
                     for (var i = 1; i < 8; i++) {
                         if (event.x < 25 + pushableAreaOffset + 50 * i) {
                             if (myGameArray[i - 1].length < 7) {
-                                clearCanvas();
-                                onlyCanvas();
-                                UpdateCanvas();
+                                Update();
                                 if (newDisctoAdd == -2) {
                                     ctx.drawImage(document.getElementById("perfectStone"), 50 * (i) - 25, 25);
                                 }
@@ -231,35 +224,19 @@
                         }
                     }
                     newDisctoAdd = Math.floor(Math.random() * 8 + 1);
-                    //newDisctoAdd = -2;
                     if (newDisctoAdd == 8) newDisctoAdd = -2;
-                    //Update();
                     var isCombo = true;
-                    //setTimeout(() => { updateInterval = setInterval(executeAndUpdate, 40); }, 250);
                     updateInterval = setInterval(executeAndUpdate, 40);
-                    //executeAndUpdate();
                 }
             }
-            if (resetEnabled) {
-                if (event.x >= 400 + pushableAreaOffset && event.x <= 475 + pushableAreaOffset && event.y >= 335 && event.y <= 360) {
-                    console.log("reset");
-                    resetArray();
-                }
+            if (event.x >= 400 + pushableAreaOffset && event.x <= 475 + pushableAreaOffset && event.y >= 335 && event.y <= 360) {
+                resetArray();
             }
         }
         function onlyCanvas() {
-            ctx.rect(25, 25, 350, 350);
-            ctx.stroke();
+            ctx.drawImage(document.getElementById("grid"), 25, 25);
             ctx.rect(400, 325, 75, 25);
             ctx.stroke();
-            ctx.beginPath();
-            for (var i = 50; i < 375; i += 50) {
-                ctx.moveTo(25 + i, 25);
-                ctx.lineTo(25 + i, 375);
-                ctx.moveTo(25, 25 + i);
-                ctx.lineTo(375, 25 + i)
-                ctx.stroke();
-            }
             ctx.fillText("Current disc:", 440, 50);
             ctx.fillText("Level:", 440, 175);
             ctx.fillText(level, 440, 200);
@@ -276,28 +253,8 @@
                 ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
-        //obsolete function, still in use. Plans to remove it
-        function UpdateCanvas() {
-            ctx.rect(25, 25, 350, 350);
-            ctx.stroke();
-            ctx.rect(400, 325, 75, 25);
-            ctx.stroke();
-            ctx.beginPath();
-            for (var i = 50; i < 375; i += 50) {
-                ctx.moveTo(25 + i, 25);
-                ctx.lineTo(25 + i, 375);
-                ctx.moveTo(25, 25 + i);
-                ctx.lineTo(375, 25 + i)
-                ctx.stroke();
-            }
-            ctx.fillText("Current disc:", 440, 50);
-            ctx.fillText("Level:", 440, 175);
-            ctx.fillText(level, 440, 200);
-            ctx.fillText("Reset", 437, 344);
-            ctx.font = "15px Arial";
-            ctx.fillText("Next wave in: ", 437, 275);
-            ctx.fillText(turnCount + " turns", 437, 290);
-            ctx.font = "20px Arial";
+
+        function updateGameInfo() {
             for (var i = 0; i < myGameArray.length; i++) {
                 for (var j = 0; j < myGameArray[i].length; j++) {
                     if (myGameArray[i][j] == -2) {
@@ -320,12 +277,7 @@
                 ctx.fillText(newDisctoAdd, 440, 100);
             }
         }
-        function updateAnimation() {
-            animationRunning = true;
-            blocksLengthToDrop = returnDroppingArray(myGameArray);
-            animate();
 
-        }
         function dropAnimation() {
             frameCounter++;
             var maxLength = 7 - myGameArray[dropArrayIndex].length;
@@ -368,7 +320,9 @@
                 frameCounter = 0;
             }
         }
-        function animate() {//fix issue where block wont fall totally because void separating it with next block
+        function updateAnimation() {//fix issue where block wont fall totally because void separating it with next block
+            animationRunning = true;
+            blocksLengthToDrop = returnDroppingArray(myGameArray);
             frameCounter++;
             var frameSpeed = 10;
             var maxLength = blocksLengthToDrop[0][0];
@@ -399,7 +353,7 @@
 
                     if (blocksLengthToDrop[i][0] * 50 < frameCounter * frameSpeed) yPos = blocksLengthToDrop[i][0] * 50;
                     else yPos = frameCounter * frameSpeed;
-                    
+
                     if (myGameArray[i][j] == -2) {
                         ctx.drawImage(document.getElementById("perfectStone"), 50 * (i + 1) - 25, canvas.height - 50 * (j + 1) - 25 + yPos);
                     }
@@ -414,18 +368,16 @@
             }
             if (maxLength * 50 <= frameCounter * frameSpeed) {
                 animationNeeded = false;
-                //animationRunning = false;
                 frameCounter = 0;
-                //clearInterval(animationInterval);
             }
         }
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
-        //potentially obsolete
         function Update() {
             clearCanvas();
-            UpdateCanvas();
+            onlyCanvas();
+            updateGameInfo();
         }
 
     </script>

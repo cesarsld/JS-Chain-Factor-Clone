@@ -6,7 +6,6 @@ function GameExecution(gameArray) {
             if (gameArray[i][j] == vertDiscCount) {
                 gameArray[i][j] = 0;
             }
-
         }
     }
     //forloop to find disc procs on rows
@@ -34,20 +33,6 @@ function GameExecution(gameArray) {
             }
         }
     }
-    //while loop is needed since length is affected to make sure all destroyed discs are removed
-    //var numsToCheck = 1; 
-    //while (numsToCheck != 0)
-    //{
-    //    for (var i = 0; i < gameArray.length; i++) {
-    //        for (var j = 0; j < gameArray[i].length; j++) {
-    //            if (gameArray[i][j] == 0) {
-    //                gameArray[i].splice(j, 1);
-    //                numsToCheck = 2;
-    //            }
-    //        }
-    //    }
-    //    numsToCheck--;
-    //}
 }
 
 //obsolete function
@@ -163,7 +148,7 @@ function ExplodeSurroundingStones(gameArray, posX, posY) {
     }
 }
 
-//returns an array that contains the informatino on how many gaps to drop above discs and at what index to start
+//returns an array that contains the information on how many gaps to drop above discs and at what index to start
 function returnDroppingArray (gameArray){
     var blocksLengthToDrop = new Array(7);
 
